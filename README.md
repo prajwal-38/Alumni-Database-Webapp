@@ -24,6 +24,7 @@ Before touching the database, let's get the Python environment ready.
 4.  **Install required packages:**
     ```bash
     .\venv\Scripts\activate
+    pip install -r requirements.txt
     ```
 
 ## Part 2: MySQL Workbench Step-by-Step
@@ -74,6 +75,7 @@ Follow the `README.md` instructions for creating users. Here is a more detailed 
     *   **Confirm Password:** `Pass@5678`
     *   Click **"Apply"**.
 
+#### (Optional)
 ### Step 2.4: Grant Permissions to the New Users
 Now you will run the final two SQL scripts.
 
@@ -94,7 +96,7 @@ The database is now fully configured.
 
 1.  **Edit the `credentials.yaml` file:**
     *   Open `credentials.yaml` in a text editor.
-    *   Change the value for `mysql_password1:` from `Joy@2003` to your actual MySQL root password.
+    *   Change the value for `mysql_password1:` from `Joy@2003` to your actual MySQL root password. ## Imp
     *   The other passwords (`mysql_password2` and `mysql_password3`) should already be correct (`Pass@1234` and `Pass@5678`).
 2.  **Run the application:**
     *   Go back to your terminal where the `(venv)` is active.
