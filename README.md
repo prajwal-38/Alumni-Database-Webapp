@@ -75,7 +75,7 @@ Follow the `README.md` instructions for creating users. Here is a more detailed 
     *   **Confirm Password:** `Pass@5678`
     *   Click **"Apply"**.
 
-#### (Optional)
+
 ### Step 2.4: Grant Permissions to the New Users
 Now you will run the final two SQL scripts.
 
