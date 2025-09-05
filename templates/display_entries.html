@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/style.css')}}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="icon" href="../static/group.png">
+    <title>Edit</title>
+</head>
+
+<body class="p-0 m-0 flex bg-[var(--color1)]">
+
+    <nav
+        class="list-none flex flex-col justify-center items-center px-4 text-xl fixed right-0 z-50 transition-all top-1/3">
+        <li class="bg-gray-900 p-3 rounded-full hover:bg-yellow-300" id="back"><a href="javascript:history.back()"><i
+                    class=" bi bi-back"></i></a></li>
+        <li class="bg-gray-900 p-3 rounded-full my-6 hover:bg-yellow-300" id="home"><a href="/tables"><i
+                    class="bi bi-house h-8 w-8"></i></a></li>
+        <li class="bg-gray-900 p-3 rounded-full hover:bg-yellow-300" id="logout"><a href="/logout"><i
+                    class="bi bi-box-arrow-right"></i></a></li>
+    </nav>
+
+    {% if display_edit_buttons=="ADMIN" or display_edit_buttons=="EMP" %}
+
+    <div
+        class="w-1/2 overflow-x-scroll h-[calc(100vh-16px)] m-2 p-2 border-2 border-white rounded-lg bg-[var(--color2)]">
+        <div class="capitalize text-center text-3xl mb-6">{{table_name}}</div>
+        <table class="mx-auto">
+            <thead>
+                <tr>
+                    {%for col_name in table_col_names%}
+                    <th>{{col_name}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+
+
+            {% for row in userDetails %}
+            <tr>
+                {% for col in row %}
+                <td>{{col}}</td>
+                {% endfor %}
+
+            </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+
+    {% else %}
+
+    <!-- This is where we want the div to be centered -->
+
+    <div
+        class="w-1/2 mx-auto overflow-x-scroll h-[calc(100vh-16px)] m-2 p-2 border-2 border-white rounded-lg bg-[var(--color2)]">
+        <div class="capitalize text-center text-3xl mb-6">{{table_name}}</div>
+        <table class="mx-auto">
+            <thead>
+                <tr>
+                    {%for col_name in table_col_names%}
+                    <th>{{col_name}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+
+
+            {% for row in userDetails %}
+            <tr>
+
+                {% for data in row%}
+                <td>{{data}}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+
+    {% endif %}
+
+    {% if display_edit_buttons=="ADMIN" or display_edit_buttons=="EMP" or display_edit_buttons == "NO" %}
+
+    <div
+        class="w-1/2 overflow-x-scroll h-[calc(100vh-16px)] m-2 p-2 border-2 border-white rounded-lg bg-[var(--color2)]">
+
+        {% if display_edit_buttons=="ADMIN" %}
+        
+        <div class="flex flex-col ">
+            <form action="/tables/edit" method="POST">
+                <button type="submit" name="insert" value={{table_name}}>Insert</button>
+                <button type="submit" name="update" value={{table_name}}>Update</button>
+                <button type="submit" name="delete" value={{table_name}}>Delete</button>
+                <button type="submit" name="rename" value={{table_name}}>Rename</button>
+                <button type="submit" name="search" value={{table_name}}>Search</button>
+                <button type="submit" name="download" value={{table_name}}>Download Table</button>
+                <button type="submit" name="upload" value="{{table_name}}" class="my-2">Upload Entries as File</button>
+            </form>
+
+            <form action="/tables" method="GET" class="w-full mx-auto">
+                <button type="submit">Go to Tables List</button>
+            </form>
+        </div>
+
+        {% elif display_edit_buttons=="EMP" %}
+        <div class="container my-6 mx-auto">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="d-flex">
+                        <div>
+                            <form action="/tables/edit" method="POST">
+                                <button type="submit" name="insert" value={{table_name}}>Insert</button>
+                                <button type="submit" name="delete" value={{table_name}}>Delete</button>
+                                <button type="submit" name="search" value={{table_name}}>Search</button>
+                                <button type="submit" name="download" value={{table_name}}>Download Table</button>
+                                <button type="submit" name="upload" value="{{table_name}}">Upload Entries as CSV</button>
+                            </form>
+                        </div>
+                        <br>
+                        <div class="ml-auto">
+                            <form action="/tables" method="GET">
+                                <button type="submit">Go to Tables List</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        {% elif display_edit_fields=="YES" %}
+
+        {% if op=='insert' %}
+        <div class="container flex flex-col">
+            <h4>INSERT INTO</h4>
+            <h4>{{table_name}}</h4>
+            <br>
+
+            <form action="/tables/edit/insert" method="POST">
+                {%for col_name in table_col_names%}
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{col_name}}</label>
+                <input type="text" name={{col_name}}
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder={{col_name}}>
+                <br>
+                {% endfor %}
+
+                <input type="hidden" name='table_name' value={{table_name}}>
+
+                <button type="submit">Execute</button>
+            </form>
+            <br>
+        </div>
+
+        {% elif op=='update' %}
+        <div class="container flex flex-col">
+            <h4>UPDATE {{table_name}}</h4>
+            <h4>SET</h4>
+            <br>
+
+            <form action="/tables/edit/update" method="POST">
+                {%for col_name in table_col_names%}
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{col_name}}</label>
+                <input type="text" name={{col_name}}
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder={{col_name}}>
+                <br>
+                {% endfor %}
+
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Condition</label>
+                <input type="text" name="condition"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="condition">
+
+                <input type="hidden" name='table_name' value={{table_name}}>
+                <br>
+                <button type="submit">Execute</button>
+            </form>
+            <br>
+        </div>
+
+        {% elif op=='delete' %}
+             {% if role == 'Admin'%}
+             <div class="container flex flex-col">
+                 <h4>DELETE FROM {{table_name}}</h4>
+                 <h4>WHERE</h4>
+                 <br>
+     
+                 <form action="/tables/edit/delete" method="POST">
+                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Condition</label>
+                     <input type="text" name="condition"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                         placeholder="condition">
+     
+                     <input type="hidden" name='table_name' value={{table_name}}>
+                     <br>
+                     <button type="submit">Execute</button>
+                 </form>
+                 <br>
+             </div>
+
+             {% elif role == 'Employee'%}
+             <div class="container flex flex-col">
+                 <h4>DELETE FROM {{table_name}}</h4>
+                 <h4>WHERE</h4>
+                 <br>
+     
+                 <form action="/tables/edit/delete" method="POST">
+                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select an attribute</label>
+                     <select id="column-dropdown"
+                             name = "drop1"
+                             onchange="populateValuesDropdown()"
+                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                             placeholder="drop1">
+                             {% for col_name in table_col_names %}
+                             <option value="{{ col_name }}">{{ col_name }}</option>
+                         {% endfor %}
+                     </select>
+                     <br>
+                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select the value</label>
+                     <select id="values-dropdown"
+                             name = "drop2"
+                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                             placeholder="drop2">
+                     </select>
+                     <input type="hidden" name='table_name' value={{table_name}}>
+                     <br>
+                     <button type="submit">Execute</button>
+                 </form>
+                 <br>
+             </div>
+             {% endif %}
+
+        {% elif op=='rename' %}
+        <div class="container flex flex-col">
+            <h4>RENAME TABLE</h4>
+            <form action="/tables/edit/rename" method="POST">
+                <h4>{{table_name}}</h4>
+                <h4>TO</h4>
+                <br>
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">New Table Name</label>
+                <input type="text" name='new_table_name'
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="New Table Name">
+                <input type="hidden" name='table_name' value={{table_name}}>
+                <br>
+                <button type="submit">Execute</button>
+            </form>
+            <br>
+        </div>
+
+        {% elif op=='search' %}
+        <div class="container flex flex-col">
+            <h4>Search the Table</h4>
+            <form action="/tables/edit/search" method="POST">
+                <input type="text" name='search_key'
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Type here.">
+                <input type="hidden" name='table_name' value={{table_name}}>
+                <br>
+                <button type="submit">Get Search Results</button>
+            </form>
+            <br>
+        </div>
+
+        {% elif op=='upload' %}
+        <div class="container flex flex-col">
+            <form  action='/tables/edit/upload/{{table_name}}' method="POST" enctype="multipart/form-data">
+                <label for="file">Pick file:</label>
+                <input type="file" name="file"><br>
+                <button type="submit">Upload</button>
+            </form>
+            <br>
+        </div>
+
+
+        {% endif %}
+
+        {% endif %}
+
+        <!-- <form action="/tables" method="GET">
+            <button type="submit">Go to Tables List</button>
+        </form> -->
+
+        <!-- {% if is_search_op=="YES" %}
+        <button type="submit" class="mx-auto">
+            <a href="/tables?tableName={{table_name}}">Go Back to {{table_name}} table</a>
+        </button>
+        {% endif %} -->
+
+    </div>
+    {% endif %}
+    <script>
+        function populateValuesDropdown() {
+            var userDetails = '{{table}}';
+            var columnDropdown = document.getElementById("column-dropdown");
+            var selectedColumn = columnDropdown.options.selectedIndex;
+            var valuesDropdown = document.getElementById("values-dropdown");
+            valuesDropdown.innerHTML = "";
+            // console.log(userDetails);
+
+            var data_js = [];
+            let str = '';
+            var flag = 0;
+            var semi = 0;
+            var row_js = [];
+            for (var j = 0; j < userDetails.length; j++) {
+                var row = userDetails[j];
+                // console.log(row)
+                if (row == '&'){
+                    flag=1;
+                    if (str != ']'){
+                        if (str != ''){
+                            row_js.push(str);
+                        }
+                    }
+                    
+                    str= '';
+                }
+                if (row == ','){
+                    if (semi == 1){
+                        flag=1;
+                    }
+                    
+                }
+            
+                if (row == '['){
+                    flag=1;
+                }
+                if (row == ']'){
+                    flag=1;
+                    data_js.push(row_js);
+                    // console.log(row_js)
+                    // console.log("ji")
+                    row_js = [];
+                }
+
+                if (flag == 0){
+                    str += row;
+                    // semi=0;
+                    // console.log(str);
+                }
+                semi=0;
+        
+                if (row == ';'){
+                    flag=0;
+                    semi = 1;
+                }
+                
+            }
+            userDetails = data_js;
+
+            var uniqueValues = new Set(); // create a Set to store unique values
+
+            for (var i = 0; i < userDetails.length; i++) {
+                var row = userDetails[i];
+                var value = row[selectedColumn];
+                if (!uniqueValues.has(value) && typeof value !== 'undefined') { // check if the value has already been added to the Set
+                    uniqueValues.add(value); // add the value to the Set if it hasn't been added yet
+                    var option = document.createElement("option");
+                    option.value = value;
+                    option.text = value;
+                    valuesDropdown.add(option);
+                }
+            }
+        }
+        
+        window.onload = function() {
+            // var tableData = JSON.parse('{{ table }}');
+            populateValuesDropdown();
+        };
+        
+    </script>    
+</body>
+
+</html>
+{% endautoescape %}

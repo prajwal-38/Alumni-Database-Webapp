@@ -1,0 +1,7 @@
+flask
+flask-mysql
+flask-session
+flask-mail
+pymysql
+cryptography
+gunicorn==19.7.1

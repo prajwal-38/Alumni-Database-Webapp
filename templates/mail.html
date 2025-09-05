@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="icon" href="{{url_for('static', filename='group.png')}}">
+    <title>Mail Alumni</title>
+    <style>
+        html, body { height: 100%; background-color: #111827; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+    </style>
+</head>
+<body class="font-sans text-gray-200">
+
+    <div class="flex h-full">
+        <!-- Main Content: Mailing List -->
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-4xl font-bold text-white">Mailing List</h1>
+                        <p class="text-gray-400 mt-1">Recipients from search: "{{search_key}}"</p>
+                    </div>
+                    <a href="/tables?tableName={{table_name}}" class="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors">
+                        <i class="bi bi-arrow-left-circle"></i>
+                        Back to Search Results
+                    </a>
+                </div>
+
+                <div class="bg-gray-800 rounded-xl shadow-2xl overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-gray-700/50 text-xs uppercase text-gray-400 tracking-wider">
+                                <tr>
+                                    {% for col_name in table_col_names %}
+                                    <th scope="col" class="py-3 px-6">{{col_name}}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-700">
+                                {% if table_before %}
+                                    {% for row in table_before %}
+                                    <tr class="hover:bg-gray-700/50 transition-colors">
+                                        {% for data in row %}
+                                        <td class="py-4 px-6 whitespace-nowrap">{{data}}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                <tr>
+                                    <td colspan="{{ table_col_names|length }}" class="text-center py-8 text-gray-500">Mailing list is empty.</td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar for Actions -->
+        <aside class="w-full lg:w-96 bg-gray-800/50 border-l border-gray-700/50 p-6 lg:p-8 overflow-y-auto">
+            <div id="action-panel">
+                {% if enable_send %}
+                <h2 class="text-2xl font-bold text-white mb-6">Compose Mail</h2>
+                <form action="/alumni/mail/send" method="POST" class="space-y-4">
+                    <div>
+                        <label class="form-label">Subject</label>
+                        <input type="text" name="subject" class="form-input" placeholder="Enter mail subject" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Body</label>
+                        <textarea name="body" class="form-input" placeholder="Write your message here..." rows="10" required></textarea>
+                    </div>
+                    <button type="submit" name="send_mail" class="w-full op-button"><i class="bi bi-send-fill mr-2"></i>Send Mail</button>
+                </form>
+                <hr class="my-6 border-gray-700">
+                <h3 class="text-xl font-bold text-white mb-4">Manage List</h3>
+                <form action="/alumni/mail/edit" method="POST" class="flex gap-3">
+                    <input type="hidden" name='table_name' value={{table_name}}>
+                    <input type="hidden" name='search_key' value={{search_key}}>
+                    <button type="submit" name="add_mail" class="w-full op-button"><i class="bi bi-person-plus-fill mr-2"></i>Add</button>
+                    <button type="submit" name="remove_mail" class="w-full op-button bg-red-600/80 hover:bg-red-600"><i class="bi bi-person-dash-fill mr-2"></i>Remove</button>
+                </form>
+                {% endif %}
+
+                {% if enable_edit %}
+                <h2 class="text-2xl font-bold text-white mb-6 capitalize">{{op}} Recipient</h2>
+                <form action="/alumni/mail/edit/update" method="POST" class="space-y-4">
+                    <input type="hidden" name='table_name' value={{table_name}}>
+                    <input type="hidden" name='search_key' value={{search_key}}>
+                    <div>
+                        <label class="form-label">Alumnus Name</label>
+                        <input type="text" name='alum_name' class="form-input" placeholder="Full Name" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Alumnus Email</label>
+                        <input type="email" name='alum_mail' class="form-input" placeholder="email@example.com" required>
+                    </div>
+                    <button type="submit" name={{op}} class="w-full op-button">Confirm {{op}}</button>
+                </form>
+                <hr class="my-6 border-gray-700">
+                <form action="/alumni/mail" method="GET">
+                    <input type="hidden" name='name_table' value={{table_name}}>
+                    <input type="hidden" name='key_search' value={{search_key}}>
+                    <button type="submit" name='back_to_send' class="w-full op-button bg-gray-600 hover:bg-gray-500"><i class="bi bi-arrow-left mr-2"></i>Back to Compose</button>
+                </form>
+                {% endif %}
+            </div>
+        </aside>
+    </div>
+
+    <!-- Common Form Styles -->
+    <style>
+        .op-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #2563eb; /* bg-blue-600 */
+            color: white;
+            font-weight: 600;
+            padding: 0.65rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease-in-out;
+            text-align: center;
+            border: 1px solid transparent;
+        }
+        .op-button:hover {
+            background-color: #1d4ed8; /* bg-blue-700 */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .form-label { display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 500; color: #d1d5db; }
+        .form-input {
+            width: 100%;
+            background-color: #374151; /* bg-gray-700 */
+            border: 1px solid #4b5563; /* border-gray-600 */
+            color: white;
+            border-radius: 0.375rem;
+            padding: 0.65rem 0.75rem;
+            transition: all 0.2s ease-in-out;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px #1e40af;
+        }
+    </style>
+</body>
+</html>
+{% endautoescape %}

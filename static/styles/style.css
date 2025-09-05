@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Sono&display=swap');
+
+/* Write css color global variables for 5 colors  */
+:root{
+    --color1: #1e1e2f;
+    --color2: #2c2c3b;
+    --color3: #20469f;
+    --color4: #4471fd;
+    --color5: #7aa4fd;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+background: #888;
+opacity: 0.5;
+border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+background: #555;
+}
+
+.left--marg{
+    display: flex;
+    margin-left: 20px;
+}
+
+.container{
+    display: flex;
+    flex-direction: row;
+}
+
+body{
+    padding: 15px;
+    background: var(--color2);
+    color: white;
+    font-family: 'Sono', sans-serif;
+    height: 100vh;
+}
+
+button{
+    background-color: var(--color4) !important;
+    /* background: linear-gradient(90deg, #1d2a97 0%, #1d2a97 100%); */
+    color: white;
+    /* border: 1px solid rgb(255, 255, 255); */
+    border-radius: 20px;
+    /* margin-right: 20px; */
+    padding: 10px 15px !important;
+    font-family: 'Sono', sans-serif;
+}
+
+button:hover{
+    background-color: var(--color3) !important;
+}
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 30rem;
+  max-height: 40rem;
+  overflow-y: scroll;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 10px;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -15rem; 
+  z-index: 1;
+}
+
+/* .tooltiptext::-webkit-scrollbar {
+    display: none;
+}
+
+.tooltiptext {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+} */
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+th{
+    padding: 10px;
+}
+td{
+    padding: 5px;
+    text-align: center;
+}

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="icon" href="{{url_for('static', filename='group.png')}}">
+    <title>Database Tables</title>
+    <style>
+        html, body {
+            height: 100%;
+            background-color: #111827; /* bg-gray-900 */
+        }
+        .table-card {
+            background-color: #1f2937; /* bg-gray-800 */
+            border: 1px solid #374151; /* border-gray-700 */
+            transition: all 0.3s ease;
+        }
+        .table-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 0 0 1px #3b82f6;
+            border-color: #3b82f6; /* blue-500 */
+        }
+        .tooltip {
+            position: relative;
+            display: block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 380px;
+            background-color: #111827;
+            color: #fff;
+            text-align: left;
+            border-radius: 8px;
+            padding: 12px;
+            position: absolute;
+            z-index: 10;
+            bottom: 110%;
+            left: 50%;
+            margin-left: -190px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 1px solid #4b5563;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body class="font-sans text-gray-200">
+    <div class="min-h-full flex flex-col">
+        <main class="flex-1 p-6 lg:p-8">
+            <div class="max-w-7xl mx-auto">
+                <!-- Header -->
+                <div class="flex justify-between items-center mb-10">
+                    <div>
+                        <h1 class="text-4xl font-bold text-white">Database Dashboard</h1>
+                        <p class="text-gray-400 mt-1">Select a table to view its entries or hover for schema.</p>
+                    </div>
+                    <a href="/logout" title="Logout" class="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-red-600/80 rounded-lg transition-colors">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Logout
+                    </a>
+                </div>
+
+                <!-- Tables Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {% for i in range(0,len) %}
+                    <div class="table-card rounded-xl p-6">
+                        <div class="tooltip">
+                            <!-- Card Content -->
+                            <div class="flex flex-col h-full">
+                                <div class="flex-grow">
+                                    <div class="flex items-center gap-4 mb-4">
+                                        <i class="bi bi-table text-2xl text-blue-400"></i>
+                                        <h2 class="text-xl font-bold capitalize text-white">{{table_names[i].replace('_', ' ')}}</h2>
+                                    </div>
+                                    <p class="text-sm text-gray-400 mb-6">
+                                        {% if display_edit_buttons=="STUDENT" %}
+                                            {% if i==0 %}Achievements of our alumni.{% elif i==1 %}Contact details about our alumni.{% elif i==2 %}Information about alumni's education.{% elif i==3 %}Information about alumni's extra curriculars.{% elif i==4 %}Information about the various projects.{% elif i==5 %}Information about work experience.{% elif i==6 %}List of all departments.{% elif i==7 %}List of all faculty advisors.{% elif i==8 %}List of all instructors.{% else %}Table description not available.{% endif %}
+                                        {% else %}
+                                            Hover to view the table schema.
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <a href="/tables?tableName={{table_names[i]}}" class="w-full text-center mt-auto px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg font-semibold transition-colors">
+                                    View Entries
+                                </a>
+                            </div>
+                            
+                            <!-- Tooltip Content -->
+                            <div class="tooltiptext">
+                                {% if display_edit_buttons=="STUDENT" %}
+                                    <h4 class="font-bold text-lg mb-2 border-b border-gray-600 pb-2">Description</h4>
+                                    <p class="text-sm text-gray-300">
+                                        {% if i==0 %}This table shows all the achievements of our alumni.{% elif i==1 %}This table gives the contact details about our alumni.{% elif i==2 %}This table contains all the information about our alumni's education.{% elif i==3 %}This table contains all the information about our alumni's extra curricular activities.{% elif i==4 %}This table contains all the information about the various projects that our alumni took.{% elif i==5 %}This table has all the information about the various companies that our alumni have worked in.{% elif i==6 %}This table has the list of all the departments and information about them.{% elif i==7 %}This table has the list of all the faculty advisors.{% elif i==8 %}This table has the list of all the instructors and information about them.{% else %}No description available.{% endif %}
+                                    </p>
+                                {% else %}
+                                    <h4 class="font-bold text-lg mb-2 border-b border-gray-600 pb-2">"{{table_names[i]}}" Schema</h4>
+                                    <table class="w-full text-xs">
+                                        <thead class="text-gray-400">
+                                            <tr>
+                                                {% for j in range(0, len_col) %}
+                                                <th class="p-2 text-left font-semibold">{{table_col_names[j]}}</th>
+                                                {% endfor %}
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-600/50">
+                                            {% for k in schema[i] %}
+                                            <tr>
+                                                {% for j in range(0, len_col) %}
+                                                <td class="p-2 font-mono">{{k[j]}}</td>
+                                                {% endfor %}
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {%endfor%}
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>
+{% endautoescape %}
